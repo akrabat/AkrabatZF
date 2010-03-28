@@ -1,6 +1,6 @@
 <?php
 
-abstract class Akrabat_Db_Schema_Change 
+abstract class Akrabat_Db_Schema_AbstractChange 
 { 
     /**
      * @var Zend_Db_Adapter_Abstract
