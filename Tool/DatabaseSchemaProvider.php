@@ -18,7 +18,7 @@ class Akrabat_Tool_DatabaseSchemaProvider extends Zend_Tool_Framework_Provider_A
             $db = $this->_getDbAdapter();
             $manager = new Akrabat_Db_Schema_Manager($dir, $db);
             
-            $result = $manager->run($version); 
+            $result = $manager->updateTo($version); 
             $response = $this->_registry->getResponse();
         
             switch ($result) {

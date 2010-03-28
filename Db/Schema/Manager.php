@@ -50,7 +50,7 @@ class Akrabat_Db_Schema_Manager
         return $version;
     } 
     
-    function run($version = null) 
+    function updateTo($version = null) 
     {
         if (is_null($version)) {
             $version = PHP_INT_MAX;
