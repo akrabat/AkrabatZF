@@ -27,7 +27,7 @@ class Akrabat_Db_Schema_Manager
     
     function getCurrentSchemaVersion() 
     {
-        // ensure we have valid connection
+        // Ensure we have valid connection to the database
         if (!$this->_db->isConnected()) {
             $this->_db->getServerVersion();
         }
