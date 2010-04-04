@@ -14,12 +14,12 @@ class Akrabat_Tool_DatabaseSchemaProvider extends Zend_Tool_Framework_Provider_A
     public function updateTo($version, $env='development', $dir='./scripts/migrations')
     {
         $this->_init($env);
+        $response = $this->_registry->getResponse();
         try {
             $db = $this->_getDbAdapter();
             $manager = new Akrabat_Db_Schema_Manager($dir, $db);
             
             $result = $manager->updateTo($version); 
-            $response = $this->_registry->getResponse();
         
             switch ($result) {
                 case Akrabat_Db_Schema_Manager::RESULT_AT_CURRENT_VERSION:
