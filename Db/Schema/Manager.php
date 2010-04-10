@@ -124,7 +124,7 @@ class Akrabat_Db_Schema_Manager
         $classname = $migration['classname'];
         require_once($this->_dir.'/'.$filename);
         if (!class_exists($classname, false)) {
-            throw new App_Db_Schema_Exception("Could not find class '$classname' in file '$filename'");
+            throw new Akrabat_Db_Schema_Exception("Could not find class '$classname' in file '$filename'");
         }
         $class = new $classname($this->_db);
         $class->$direction();
