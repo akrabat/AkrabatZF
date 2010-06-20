@@ -8,7 +8,7 @@ To get the Zend_Tool provider working:
 3. Edit the created `zf.ini`. Change path so that it includes ZF and Akrabat/library
     e.g:
     
-        php.include_path = "/usr/local/include/M5/1.0/library:/usr/local/include/Akrabat/library/"
+        php.include_path = "/usr/local/include/zf1/library:/usr/local/include/Akrabat/library/"
     
     Also, add the provider class, by adding the following line.
 
