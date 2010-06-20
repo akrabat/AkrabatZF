@@ -62,4 +62,4 @@ Akrabat_Db_Schema_Manager
         resources.db.table_prefix = "prefix"
 
 
-See http://akrabat.com/zend-framework/akrabat_db_schema_manager-zend-framework-database-migrations/ for full details
+See [Akrabat_Db_Schema_Manager: Zend Framework database migrations](http://akrabat.com/zend-framework/akrabat_db_schema_manager-zend-framework-database-migrations/) for full details
