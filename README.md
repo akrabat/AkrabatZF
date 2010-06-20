@@ -56,6 +56,10 @@ Akrabat_Db_Schema_Manager
             }
         
         }
+        
+4. If you want a table prefix, add this to your `application.ini`:
+
+        resources.db.table_prefix = "prefix"
 
 
 See http://akrabat.com/zend-framework/akrabat_db_schema_manager-zend-framework-database-migrations/ for full details
