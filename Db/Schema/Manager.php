@@ -5,7 +5,7 @@ class Akrabat_Db_Schema_Manager
     const RESULT_AT_CURRENT_VERSION = 'RESULT_AT_CURRENT_VERSION';
     const RESULT_NO_MIGRATIONS_FOUND = 'RESULT_NO_MIGRATIONS_FOUND';
     
-    protected $_schemaVersionTable = 'schema_version';
+    protected $_schemaVersionTableName = 'schema_version';
     
     /**
      * Directory containing migration files
@@ -18,11 +18,31 @@ class Akrabat_Db_Schema_Manager
      * @var Zend_Db_Adapter_Abstract
      */ 
     protected $_db; 
+
+    /**
+     * Table prefix string for use by change classes
+     * @var string
+     */
+    protected $_tablePrefix;
  
-    function __construct($dir, Zend_Db_Adapter_Abstract $db) 
+    /**
+     * Constructor
+     * 
+     * Available $options keys:
+     * 		'table_prefix' => prefix string to place before table names
+     * 		'schema_version_table_name' => name of table to use for holding the schema version number
+     * 
+     * 
+     * @param $dir              Directory where migrations files are stored
+     * @param $db               Database adapter
+     * @param $tablePrefix      Table prefix to be used by change files
+     * @param $options          Options
+     */
+    function __construct($dir, Zend_Db_Adapter_Abstract $db, $tablePrefix='')
     {
         $this->_dir = $dir;
         $this->_db = $db;
+        $this->_tablePrefix = $tablePrefix;
     } 
     
     function getCurrentSchemaVersion() 
@@ -31,18 +51,19 @@ class Akrabat_Db_Schema_Manager
         if (!$this->_db->isConnected()) {
             $this->_db->getServerVersion();
         }
+        $schemaVersionTableName = $this->getPrefixedSchemaVersionTableName();
         
-        $sql = "SELECT version FROM " . $this->_schemaVersionTable;
+        $sql = "SELECT version FROM " . $schemaVersionTableName;
         try {
             $version = $this->_db->fetchOne($sql);
         } catch (Zend_Db_Exception $e) {
             // exception means that the schema version table doesn't exist, so create it
-            $createSql = "CREATE TABLE {$this->_schemaVersionTable} ( 
+            $createSql = "CREATE TABLE $schemaVersionTableName ( 
                 version int NOT NULL,
                 PRIMARY KEY (version)
             )";
             $this->_db->query($createSql);
-            $insertSql = "INSERT INTO {$this->_schemaVersionTable} (version) VALUES (0)";
+            $insertSql = "INSERT INTO $schemaVersionTableName (version) VALUES (0)";
             $this->_db->query($insertSql);
             $version = $this->_db->fetchOne($sql);
         }
@@ -126,7 +147,7 @@ class Akrabat_Db_Schema_Manager
         if (!class_exists($classname, false)) {
             throw new Akrabat_Db_Schema_Exception("Could not find class '$classname' in file '$filename'");
         }
-        $class = new $classname($this->_db);
+        $class = new $classname($this->_db, $this->_tablePrefix);
         $class->$direction();
         
         if($direction == 'down') {
@@ -138,7 +159,14 @@ class Akrabat_Db_Schema_Manager
     
     protected function _updateSchemaVersion($version) 
     {
-        $sql = "UPDATE  $this->_schemaVersionTable SET version = " . (int)$version;
+        $schemaVersionTableName = $this->getPrefixedSchemaVersionTableName();
+        $sql = "UPDATE  $schemaVersionTableName SET version = " . (int)$version;
         $this->_db->query($sql);
-    } 
+    }
+    
+    public function getPrefixedSchemaVersionTableName()
+    {
+        return $this->_tablePrefix . $this->_schemaVersionTableName;
+    }
+
 } 

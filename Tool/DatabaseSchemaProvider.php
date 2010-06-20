@@ -1,10 +1,26 @@
 <?php
-class Akrabat_Tool_DatabaseSchemaProvider extends Zend_Tool_Framework_Provider_Abstract
+class Akrabat_Tool_DatabaseSchemaProvider extends Zend_Tool_Project_Provider_Abstract
 {
     /**
      * @var Zend_Db_Adapter_Interface
      */
     protected $_db;
+    
+    /**
+     * @var string
+     */
+    protected $_tablePrefix;
+    
+    /**
+     * @var Zend_Config
+     */
+    protected $_config;
+    
+    /**
+     * Section name to load from config
+     * @var string
+     */
+    protected $_appConfigSectionName;
 
     public function update($env='development', $dir='./scripts/migrations')
     {
@@ -17,7 +33,7 @@ class Akrabat_Tool_DatabaseSchemaProvider extends Zend_Tool_Framework_Provider_A
         $response = $this->_registry->getResponse();
         try {
             $db = $this->_getDbAdapter();
-            $manager = new Akrabat_Db_Schema_Manager($dir, $db);
+            $manager = new Akrabat_Db_Schema_Manager($dir, $db, $this->getTablePrefix());
             
             $result = $manager->updateTo($version); 
         
@@ -75,10 +91,14 @@ class Akrabat_Tool_DatabaseSchemaProvider extends Zend_Tool_Framework_Provider_A
 
     protected function _init($env)
     {
-        defined('APPLICATION_ENV') || define('APPLICATION_ENV', $env);
-        defined('APPLICATION_PATH') || define('APPLICATION_PATH', realpath('./application'));
+        $profile = $this->_loadProfile(self::NO_PROFILE_THROW_EXCEPTION);
+        $appConfigFileResource = $profile->search('applicationConfigFile');
+        if ($appConfigFileResource == false) {
+            throw new Zend_Tool_Project_Exception('A project with an application config file is required to use this provider.');
+        }
+        $appConfigFilePath = $appConfigFileResource->getPath();
+        $this->_config = new Zend_Config_Ini($appConfigFilePath, $env);
 
-        
         require_once 'Zend/Loader/Autoloader.php';
         $autoloader = Zend_Loader_Autoloader::getInstance();
         $autoloader->registerNamespace('Akrabat_');
@@ -92,14 +112,27 @@ class Akrabat_Tool_DatabaseSchemaProvider extends Zend_Tool_Framework_Provider_A
     protected function _getDbAdapter()
     {
         if ((null === $this->_db)) {
-            $config = new Zend_Config_Ini(APPLICATION_PATH . '/configs/application.ini', APPLICATION_ENV);
-            $dbConfig = $config->resources->db;
+            $dbConfig = $this->_config->resources->db;
             $this->_db = Zend_Db::factory($dbConfig->adapter, $dbConfig->params);
         }
         return $this->_db;
     }
+    
+    /**
+     * Retrieve table prefix
+     *
+     * @return string
+     */
+    public function getTablePrefix()
+    {
+        if ((null === $this->_tablePrefix)) {
+            $prefix = '';
+            if (isset($this->_config->resources->db->table_prefix)) {
+                $prefix = $this->_config->resources->db->table_prefix;
+            }
+            $this->_tablePrefix = $prefix.'_';
+        }
+        return $this->_tablePrefix;
+    }
 
-    
-    
-    
 }
