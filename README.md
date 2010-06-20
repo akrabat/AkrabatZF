@@ -15,6 +15,7 @@ Also, add the provider class, by adding the following line.
     basicloader.classes.0 = "Akrabat_Tool_MigrationProvider"
 
 
+
 To use:
 
 1. Create scripts/migrations folder in your ZF application
@@ -22,7 +23,8 @@ To use:
    where:  
        nnn => any number. The lower numbered files are executed first  
        Xxx => any name. This is the class name within the file.
-3. Create a class in your migrations file. Example for 001-Users.php:  
+3. Create a class in your migrations file. Example for 001-Users.php:
+  
     <?php
     class Users extends Akrabat_Db_Schema_AbstractChange 
     {
