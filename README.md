@@ -6,13 +6,13 @@ To get the Zend_Tool provider working:
 1. `zf --setup storage-directory`
 2. `zf --setup config-file`
 3. Edit the created `zf.ini`. Change path so that it includes ZF and Akrabat/library
-e.g:
+    e.g:
+    
+        php.include_path = "/usr/local/include/M5/1.0/library:/usr/local/include/Akrabat/library/"
+    
+    Also, add the provider class, by adding the following line.
 
-    php.include_path = "/usr/local/include/M5/1.0/library:/usr/local/include/Akrabat/library/"
-
-Also, add the provider class, by adding the following line.
-
-    basicloader.classes.0 = "Akrabat_Tool_MigrationProvider"
+        basicloader.classes.0 = "Akrabat_Tool_MigrationProvider"
 
 
 Akrabat_Db_Schema_Manager
@@ -20,9 +20,10 @@ Akrabat_Db_Schema_Manager
 
 1. Create scripts/migrations folder in your ZF application
 2. Create migration files within migrations with the file name format of nnn-Xxxx.php. e.g. 001-Users.php
-   where:  
+    where:  
        nnn => any number. The lower numbered files are executed first  
        Xxx => any name. This is the class name within the file.
+
 3. Create a class in your migrations file. Example for 001-Users.php:
   
     <?php
