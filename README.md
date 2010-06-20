@@ -15,8 +15,8 @@ Also, add the provider class, by adding the following line.
     basicloader.classes.0 = "Akrabat_Tool_MigrationProvider"
 
 
-
-To use:
+Akrabat_Db_Schema_Manager
+-------------------------
 
 1. Create scripts/migrations folder in your ZF application
 2. Create migration files within migrations with the file name format of nnn-Xxxx.php. e.g. 001-Users.php
