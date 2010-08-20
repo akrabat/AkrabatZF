@@ -72,7 +72,7 @@ class Akrabat_Tool_DatabaseSchemaProvider extends Zend_Tool_Project_Provider_Abs
             
             // Initialize and retrieve DB resource
             $db = $this->_getDbAdapter();
-            $manager = new Akrabat_Db_Schema_Manager($dir, $db);
+            $manager = new Akrabat_Db_Schema_Manager($dir, $db, $this->getTablePrefix());
             echo 'Current schema version is ' . $manager->getCurrentSchemaVersion() . PHP_EOL;
             
             return true;
