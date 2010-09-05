@@ -1,14 +1,21 @@
 Akrabat ZF library
 ==================
 
+ZF1:
+----
+
 To get the Zend_Tool provider working:
+
 
 1. `zf --setup storage-directory`
 2. `zf --setup config-file`
-3. Edit the created `zf.ini`. Change path so that it includes ZF and Akrabat/library
+3. `cd /usr/local/include`
+4. `git clone http://github.com/akrabat/Akrabat.git`
+5. Place a copy of ZF1 in /usr/local/include/zf1/, so that the Zend folder is in zf1/library/Zend
+5. Edit the created `~/.zf.ini`. Change path so that it includes ZF1 and Akrabat/zf1
     e.g:
     
-        php.include_path = "/usr/local/include/zf1/library:/usr/local/include/Akrabat/library/"
+        php.include_path = "/usr/local/include/zf1/library:/usr/local/include/Akrabat/zf1/"
     
     Also, add the provider class, by adding the following line.
 
