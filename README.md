@@ -19,7 +19,7 @@ To get the Zend_Tool provider working:
         
 4. Place a copy of the Akrabat Tools in `/usr/local/include/Akrabat`:
         
-        cd /usr/local/include`
+        cd /usr/local/include
         git clone http://github.com/akrabat/Akrabat.git
         
 5. Edit the created `~/.zf.ini`. Change path so that it includes ZF1 and Akrabat/zf1, allow for auotoloading Akrabat and set up the provider:
@@ -83,8 +83,8 @@ To get the Zend\Tool provider working:
 
 1. Place a copy of ZF2 in `/usr/local/include/zf2/`, so that the Zend folder is in `zf2/library/Zend`:
     
-        cd /usr/local/include`
-        git clone git://git.zendframework.com/zf.git zf2`
+        cd /usr/local/include
+        git clone git://git.zendframework.com/zf.git zf2
     
     Don't forget to periodically update with `git pull origin master`
 2. Update your `~/.bash_profile` to set up an alias to the ZF2 zf.sh script
