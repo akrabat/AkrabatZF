@@ -16,7 +16,7 @@
  * @package    Akrabat_Db
  * @subpackage Adapter
  * @copyright  Copyright (c) 2005-2010 Zend Technologies USA Inc. (http://www.zend.com)
- * @copyright  Copyright (c) 22010 Rob Allen (rob@akrabat.com)
+ * @copyright  Copyright (c) 2010 Rob Allen (rob@akrabat.com)
  * @version    $Id: $
  */
 
@@ -34,7 +34,7 @@ require_once 'Zend/Db/Adapter/Pdo/Abstract.php';
  * @package    Akrabat_Db
  * @subpackage Adapter
  * @copyright  Copyright (c) 2005-2010 Zend Technologies USA Inc. (http://www.zend.com)
- * @copyright  Copyright (c) 22010 Rob Allen (rob@akrabat.com)
+ * @copyright  Copyright (c) 2010 Rob Allen (rob@akrabat.com)
  * @license    http://framework.zend.com/license/new-bsd     New BSD License
  */
 class Akrabat_Db_Adapter_Pdo_Sqlsrv extends Zend_Db_Adapter_Pdo_Abstract
