@@ -39,7 +39,6 @@ require_once 'Zend/Db/Adapter/Pdo/Abstract.php';
  */
 class Akrabat_Db_Adapter_Pdo_Sqlsrv extends Zend_Db_Adapter_Pdo_Abstract
 {
-
     /**
      * PDO type.
      *
@@ -84,40 +83,42 @@ class Akrabat_Db_Adapter_Pdo_Sqlsrv extends Zend_Db_Adapter_Pdo_Abstract
         // baseline of DSN parts
         $dsn = $this->_config;
 
-        // baseline of DSN parts
-        $dsn = $this->_config;
-
         if (isset($dsn['name'])) {
-            $dsn = $this->_pdoType . ':' . $dsn['dbname'];
+            $dsn = $this->_pdoType . ':' . $dsn['name'];
         } else {
 
-            $parts = array();
-            if(isset($dsn['driver_options'])) {
-                $parts = $dsn['driver_options'];
+            if(isset($dsn['dbname'])) {
+                $dsn['Database'] = $dsn['dbname'];
+                unset($dsn['dbname']);
             }
 
-            if(isset($dsn['dbname'])) {
-                $parts['DATABASE'] = $dsn['dbname'];
-            }
             if(isset($dsn['host'])) {
                 if($dsn['host'] == '127.0.0.1') {
                     $dsn['host'] = '(local)';
                 }
-                $parts['SERVER'] = $dsn['host'];
+                $dsn['Server'] = $dsn['host'];
+                unset($dsn['host']);
             }
 
-            foreach ($parts as $key => $val) {
-                $parts[$key] = "$key=$val";
+            unset($dsn['username']);
+            unset($dsn['password']);
+            unset($dsn['options']);
+            unset($dsn['charset']);
+            unset($dsn['persistent']);
+            unset($dsn['driver_options']);
+            if (isset($dsn['ReturnDatesAsStrings'])) {
+                // common sqlsrv setting but not supported by pdo_sqlsrv
+                unset($dsn['ReturnDatesAsStrings']);
             }
 
-            if (isset($parts['ReturnDatesAsStrings'])) {
-                unset($parts['ReturnDatesAsStrings']); // only needed for sqlsrv
+
+            foreach ($dsn as $key => $val) {
+                $dsn[$key] = "$key=$val";
             }
 
-
-            $dsn = $this->_pdoType . ':' . implode(';', $parts);
+            $dsn = $this->_pdoType . ':' . implode(';', $dsn);
         }
-        //echo $dsn;exit;
+
         return $dsn;
     }
 
