@@ -2,7 +2,8 @@
 
 namespace Akrabat\Tool;
 
-class DatabaseSchemaProvider extends \Zend\Tool\Project\Provider\AbstractProvider
+class DatabaseSchemaProvider 
+    extends \Zend\Tool\Project\Provider\AbstractProvider
 {
     /**
      * @var Zend_Db_Adapter_Interface
@@ -100,11 +101,12 @@ class DatabaseSchemaProvider extends \Zend\Tool\Project\Provider\AbstractProvide
             throw new \Zend\Tool\Project\Exception('A project with an application config file is required to use this provider.');
         }
         $appConfigFilePath = $appConfigFileResource->getPath();
-        $this->_config = new Zend_Config_Ini($appConfigFilePath, $env);
+        $this->_config = new \Zend\Config\Ini($appConfigFilePath, $env);
 
-        require_once 'Zend/Loader/Autoloader.php';
-        $autoloader = \Zend\Loader\Autoloader::getInstance();
-        $autoloader->registerNamespace('Akrabat\\');
+        require_once 'Zend/Loader/StandardAutoloader.php';
+        $autoloader = new \Zend\Loader\StandardAutoloader();
+        $autoloader->registerNamespace('Akrabat', realpath(__DIR__. '/../'));
+        $autoloader->register();
     }
     
     /**
@@ -116,7 +118,7 @@ class DatabaseSchemaProvider extends \Zend\Tool\Project\Provider\AbstractProvide
     {
         if ((null === $this->_db)) {
             $dbConfig = $this->_config->resources->db;
-            $this->_db = \Zend\Db::factory($dbConfig->adapter, $dbConfig->params);
+            $this->_db = \Zend\Db\Db::factory($dbConfig->adapter, $dbConfig->params);
         }
         return $this->_db;
     }
