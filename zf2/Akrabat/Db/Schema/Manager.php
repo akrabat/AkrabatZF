@@ -62,7 +62,7 @@ class Manager
         } catch (Exception $e) {
             // exception means that the schema version table doesn't exist, so create it
             $createSql = "CREATE TABLE $schemaVersionTableName ( 
-                version int NOT NULL,
+                version bigint NOT NULL,
                 PRIMARY KEY (version)
             )";
             $this->_db->query($createSql);
