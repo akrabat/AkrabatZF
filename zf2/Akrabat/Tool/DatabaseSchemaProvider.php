@@ -133,9 +133,8 @@ class DatabaseSchemaProvider
         if ((null === $this->_tablePrefix)) {
             $prefix = '';
             if (isset($this->_config->resources->db->table_prefix)) {
-                $prefix = $this->_config->resources->db->table_prefix;
+                $prefix = $this->_config->resources->db->table_prefix . '_';
             }
-            $this->_tablePrefix = $prefix.'_';
         }
         return $this->_tablePrefix;
     }

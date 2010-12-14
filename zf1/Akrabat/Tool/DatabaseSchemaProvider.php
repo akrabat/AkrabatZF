@@ -128,9 +128,9 @@ class Akrabat_Tool_DatabaseSchemaProvider extends Zend_Tool_Project_Provider_Abs
         if ((null === $this->_tablePrefix)) {
             $prefix = '';
             if (isset($this->_config->resources->db->table_prefix)) {
-                $prefix = $this->_config->resources->db->table_prefix;
+                $prefix = $this->_config->resources->db->table_prefix . '_';
             }
-            $this->_tablePrefix = $prefix.'_';
+            $this->_tablePrefix = $prefix;
         }
         return $this->_tablePrefix;
     }
