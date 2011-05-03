@@ -112,13 +112,24 @@ class DatabaseSchemaProvider
     /**
      * Retrieve initialized DB connection
      *
-     * @return Zend_Db_Adapter_Interface
+     * @return \Zend\Db\Adapter\AbstractAdapter
      */
     protected function _getDbAdapter()
     {
         if ((null === $this->_db)) {
-            $dbConfig = $this->_config->resources->db;
-            $this->_db = \Zend\Db\Db::factory($dbConfig->adapter, $dbConfig->params);
+        	if($this->_config->resources->db){
+        		$dbConfig = $this->_config->resources->db;
+            	$this->_db = \Zend\Db\Db::factory($dbConfig->adapter, $dbConfig->params);
+        	} elseif($this->_config->resources->multidb){
+        		foreach ($this->_config->resources->multidb as $db) {
+        			if($db->default){
+        				$this->_db = \Zend\Db\Db::factory($db->adapter, $db);
+        			}
+        		}
+        	}
+        	if($this->_db instanceof \Zend\Db\Adapter\AbstractAdapter) {
+        		throw new Akrabat\Db\Schema\Exception('Database was not initialized');
+        	}
         }
         return $this->_db;
     }
