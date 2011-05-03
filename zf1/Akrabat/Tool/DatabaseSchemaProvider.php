@@ -112,19 +112,19 @@ class Akrabat_Tool_DatabaseSchemaProvider extends Zend_Tool_Project_Provider_Abs
     protected function _getDbAdapter()
     {
         if ((null === $this->_db)) {
-        	if($this->_config->resources->db){
-        		$dbConfig = $this->_config->resources->db;
-            	$this->_db = Zend_Db::factory($dbConfig->adapter, $dbConfig->params);
-        	} elseif($this->_config->resources->multidb){
-        		foreach ($this->_config->resources->multidb as $db) {
-        			if($db->default){
-        				$this->_db = Zend_Db::factory($db->adapter, $db);
-        			}
-        		}
-        	}
-        	if($this->_db instanceof Zend_Db_Adapter_Interface) {
-        		throw new Akrabat_Db_Schema_Exception('Database was not');
-        	}
+            if($this->_config->resources->db){
+                $dbConfig = $this->_config->resources->db;
+                $this->_db = Zend_Db::factory($dbConfig->adapter, $dbConfig->params);
+            } elseif($this->_config->resources->multidb){
+                foreach ($this->_config->resources->multidb as $db) {
+                    if($db->default){
+                        $this->_db = Zend_Db::factory($db->adapter, $db);
+                    }
+                }
+            }
+            if($this->_db instanceof Zend_Db_Adapter_Interface) {
+                throw new Akrabat_Db_Schema_Exception('Database was not initialized');
+            }
         }
         return $this->_db;
     }
