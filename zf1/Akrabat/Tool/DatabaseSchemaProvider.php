@@ -150,7 +150,7 @@ class Akrabat_Tool_DatabaseSchemaProvider extends Zend_Tool_Project_Provider_Abs
      * 
      * Creates a migration script template.
      * <code>
-     * zf create-migration Akrabat $classname
+     * zf create-migration database-schema $classname
      * </code>
      * <p> This will generate a UTC timestamped migration script in the 
      * scripts/migrations directory.
