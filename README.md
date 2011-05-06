@@ -38,6 +38,9 @@ To get the Zend_Tool provider working:
        nnn => any number. The lower numbered files are executed first  
        Xxx => any name. This is the class name within the file.
 
+2.1 Alternatively you may generate a migrations template by performing the following:
+
+    zf create-migration database-schema {MigrationClassName}
 3. Create a class in your migrations file. Example for 001-Users.php:
     
         class Users extends Akrabat_Db_Schema_AbstractChange 
@@ -113,7 +116,9 @@ To get the Zend\Tool provider working:
     where:  
        nnn => any number. The lower numbered files are executed first  
        Xxx => any name. This is the class name within the file.
+2.1 Alternatively you may generate a migrations template by performing the following:
 
+    zf create-migration database-schema {MigrationClassName}
 3. Create a class in your migrations file. Example for 001-Users.php:
     
         class Users extends \Akrabat\Db\Schema\AbstractChange 
