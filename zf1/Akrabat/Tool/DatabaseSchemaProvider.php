@@ -146,8 +146,6 @@ class Akrabat_Tool_DatabaseSchemaProvider extends Zend_Tool_Project_Provider_Abs
         return $this->_tablePrefix;
     }
     
-
-    
     /**
      * 
      * Creates a migration script template.
@@ -226,7 +224,7 @@ class Akrabat_Tool_DatabaseSchemaProvider extends Zend_Tool_Project_Provider_Abs
             ->setDocblock($docblock)
             ->generate();
         file_put_contents($this->_getDirectory() . '.' . $fileName, $data);
-        $response->appendContent('Migration Script Saved...', array('color' => 'green'));
+        $response->appendContent('Migration Script Saved to: [' . $fileName . ']', array('color' => 'green'));
     }
 
 }

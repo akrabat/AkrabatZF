@@ -149,9 +149,6 @@ class DatabaseSchemaProvider
         }
         return $this->_tablePrefix;
     }
-
-    
-
     
     /**
      * 
@@ -231,7 +228,7 @@ class DatabaseSchemaProvider
             ->setDocblock($docblock)
             ->generate();
         file_put_contents($this->_getDirectory() . '.' . $fileName, $data);
-        $response->appendContent('Migration Script Saved...', array('color' => 'green'));
+        $response->appendContent('Migration Script Saved to: [' . $fileName . ']', array('color' => 'green'));
     }
     
 }
