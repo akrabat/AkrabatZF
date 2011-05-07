@@ -223,7 +223,7 @@ class DatabaseSchemaProvider
         ));
         $data = '<?php '.PHP_EOL;
         $data .= $cg->setName($migrationName)
-            ->setExtendedClass('Akrabat\Db\Schema\AbstractChange')
+            ->setExtendedClass('\Akrabat\Db\Schema\AbstractChange')
             ->setMethods($methods)
             ->setDocblock($docblock)
             ->generate();
