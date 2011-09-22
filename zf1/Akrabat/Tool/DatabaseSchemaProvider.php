@@ -5,17 +5,17 @@ class Akrabat_Tool_DatabaseSchemaProvider extends Zend_Tool_Project_Provider_Abs
      * @var Zend_Db_Adapter_Interface
      */
     protected $_db;
-    
+
     /**
      * @var string
      */
     protected $_tablePrefix;
-    
+
     /**
      * @var Zend_Config
      */
     protected $_config;
-    
+
     /**
      * Section name to load from config
      * @var string
@@ -26,7 +26,7 @@ class Akrabat_Tool_DatabaseSchemaProvider extends Zend_Tool_Project_Provider_Abs
     {
         return $this->updateTo(null, $env, $dir);
     }
-    
+
     public function updateTo($version, $env='development', $dir='./scripts/migrations')
     {
         $this->_init($env);
@@ -34,9 +34,9 @@ class Akrabat_Tool_DatabaseSchemaProvider extends Zend_Tool_Project_Provider_Abs
         try {
             $db = $this->_getDbAdapter();
             $manager = new Akrabat_Db_Schema_Manager($dir, $db, $this->getTablePrefix());
-            
-            $result = $manager->updateTo($version); 
-        
+
+            $result = $manager->updateTo($version);
+
             switch ($result) {
                 case Akrabat_Db_Schema_Manager::RESULT_AT_CURRENT_VERSION:
                     if (!$version) {
@@ -44,15 +44,15 @@ class Akrabat_Tool_DatabaseSchemaProvider extends Zend_Tool_Project_Provider_Abs
                     }
                     $response->appendContent("Already at version $version");
                     break;
-                    
+
                 case Akrabat_Db_Schema_Manager::RESULT_NO_MIGRATIONS_FOUND :
                     $response->appendContent("No migration files found to migrate from {$manager->getCurrentSchemaVersion()} to $version");
                     break;
-                    
+
                 default:
                     $response->appendContent('Schema updated to version ' . $manager->getCurrentSchemaVersion());
-            } 
-            
+            }
+
             return true;
         } catch (Exception $e) {
             $response->appendContent('AN ERROR HAS OCCURED:');
@@ -60,7 +60,7 @@ class Akrabat_Tool_DatabaseSchemaProvider extends Zend_Tool_Project_Provider_Abs
             return false;
         }
     }
-    
+
 
     /**
      * Provide the current schama version number
@@ -69,20 +69,20 @@ class Akrabat_Tool_DatabaseSchemaProvider extends Zend_Tool_Project_Provider_Abs
     {
         $this->_init($env);
         try {
-            
+
             // Initialize and retrieve DB resource
             $db = $this->_getDbAdapter();
             $manager = new Akrabat_Db_Schema_Manager($dir, $db, $this->getTablePrefix());
             echo 'Current schema version is ' . $manager->getCurrentSchemaVersion() . PHP_EOL;
-            
+
             return true;
         } catch (Exception $e) {
             echo 'AN ERROR HAS OCCURED:' . PHP_EOL;
             echo $e->getMessage() . PHP_EOL;
             return false;
         }
-    } 
-    
+    }
+
     protected function _getDirectory()
     {
         $dir = './scripts/migrations';
@@ -93,17 +93,31 @@ class Akrabat_Tool_DatabaseSchemaProvider extends Zend_Tool_Project_Provider_Abs
     {
         $profile = $this->_loadProfile(self::NO_PROFILE_THROW_EXCEPTION);
         $appConfigFileResource = $profile->search('applicationConfigFile');
+
         if ($appConfigFileResource == false) {
             throw new Zend_Tool_Project_Exception('A project with an application config file is required to use this provider.');
         }
         $appConfigFilePath = $appConfigFileResource->getPath();
-        $this->_config = new Zend_Config_Ini($appConfigFilePath, $env);
+
+        $this->_config = new Zend_Config_Ini(
+            $appConfigFilePath,
+            $env,
+            array('allowModifications' => true)
+        );
+
+        $appConfigFilePathLocal = dirname($appConfigFilePath).'/local.ini';
+        if (file_exists($appConfigFilePathLocal)) {
+            $localConfig = new Zend_Config_Ini($appConfigFilePathLocal);
+            if (isset($localConfig->$env)) {
+                $this->_config->merge($localConfig->$env);
+            }
+        }
 
         require_once 'Zend/Loader/Autoloader.php';
         $autoloader = Zend_Loader_Autoloader::getInstance();
         $autoloader->registerNamespace('Akrabat_');
     }
-    
+
     /**
      * Retrieve initialized DB connection
      *
@@ -128,7 +142,7 @@ class Akrabat_Tool_DatabaseSchemaProvider extends Zend_Tool_Project_Provider_Abs
         }
         return $this->_db;
     }
-    
+
     /**
      * Retrieve table prefix
      *
