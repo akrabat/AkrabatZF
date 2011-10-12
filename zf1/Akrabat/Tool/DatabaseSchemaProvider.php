@@ -61,26 +61,7 @@ class Akrabat_Tool_DatabaseSchemaProvider extends Zend_Tool_Project_Provider_Abs
         }
     }
 
-    public function decrement($env='development', $dir='./scripts/migrations')
-    {
-    	$this->_init($env);
-    	try {
-    		$db = $this->_getDbAdapter();
-    		$manager = new Akrabat_Db_Schema_Manager($dir, $db, $this->getTablePrefix());
-    		$version = $manager->getCurrentSchemaVersion();
-    		if ($version > 0) {
-	    		return $this->updateTo($version - 1, $env, $dir);
-    		}
-    		echo 'Schema is already at version 0' . PHP_EOL;
-    		return false;
-    	} catch (Exception $e) {
-    		echo 'AN ERROR HAS OCCURRED:' . PHP_EOL;
-    		echo $e->getMessage() . PHP_EOL;
-    		return false;
-    	}
-    }
-    
-    public function increment($env='development', $dir='./scripts/migrations')
+    public function decrement($versions=1, $env='development', $dir='./scripts/migrations')
     {
     	$this->_init($env);
         $response = $this->_registry->getResponse();
@@ -88,7 +69,34 @@ class Akrabat_Tool_DatabaseSchemaProvider extends Zend_Tool_Project_Provider_Abs
             $db = $this->_getDbAdapter();
             $manager = new Akrabat_Db_Schema_Manager($dir, $db, $this->getTablePrefix());
 
-            $result = $manager->incrementVersion();
+            $result = $manager->decrementVersion($versions);
+
+            switch ($result) {
+                case Akrabat_Db_Schema_Manager::RESULT_AT_MINIMUM_VERSION:
+                    $response->appendContent("Already at minimum version " . $manager->getCurrentSchemaVersion());
+                    break;
+
+                default:
+                    $response->appendContent('Schema updated to version ' . $manager->getCurrentSchemaVersion());
+            }
+
+            return true;
+        } catch (Exception $e) {
+            $response->appendContent('AN ERROR HAS OCCURED: ');
+            $response->appendContent($e->getMessage());
+            return false;
+        }
+    }
+    
+    public function increment($versions=1,$env='development', $dir='./scripts/migrations')
+    {
+    	$this->_init($env);
+        $response = $this->_registry->getResponse();
+        try {
+            $db = $this->_getDbAdapter();
+            $manager = new Akrabat_Db_Schema_Manager($dir, $db, $this->getTablePrefix());
+
+            $result = $manager->incrementVersion($versions);
 
             switch ($result) {
                 case Akrabat_Db_Schema_Manager::RESULT_AT_MAXIMUM_VERSION:

@@ -5,6 +5,8 @@ class Akrabat_Db_Schema_Manager
     const RESULT_AT_CURRENT_VERSION = 'RESULT_AT_CURRENT_VERSION';
     const RESULT_NO_MIGRATIONS_FOUND = 'RESULT_NO_MIGRATIONS_FOUND';
     const RESULT_AT_MAXIMUM_VERSION = 'RESULT_AT_MAXIMUM_VERSION';
+    const RESULT_AT_MINIMUM_VERSION = 'RESULT_AT_MINIMUM_VERSION';
+    
     
     protected $_schemaVersionTableName = 'schema_version';
     
@@ -115,16 +117,42 @@ class Akrabat_Db_Schema_Manager
         return self::RESULT_OK;
     } 
 
-    public function incrementVersion()
+    public function incrementVersion($versions)
     {
+    	$versions = (int)$versions;
+    	if ($versions < 1) {
+    		$versions = 1;
+    	}
     	$currentVersion = $this->getCurrentSchemaVersion();
     	
     	$files = $this->_getMigrationFiles($currentVersion, PHP_INT_MAX);
     	if (empty($files)) {
     		return self::RESULT_AT_MAXIMUM_VERSION;
     	}
+    	
+    	$files = array_slice($files, 0, $versions);
 
-    	$nextFile = array_shift($files);
+    	$nextFile = array_pop($files);
+    	$nextVersion = $nextFile['version'];
+    	
+    	return $this->updateTo($nextVersion);
+    }
+    
+    public function decrementVersion($versions)
+    {
+    	$versions = (int)$versions;
+    	if ($versions < 1) {
+    		$versions = 1;
+    	}
+    	$currentVersion = $this->getCurrentSchemaVersion();
+    	
+    	$files = $this->_getMigrationFiles($currentVersion, 0);
+    	if (empty($files)) {
+    		return self::RESULT_AT_MINIMUM_VERSION;
+    	}
+    	
+    	$files = array_slice($files, 0, $versions+1);
+    	$nextFile = array_pop($files);
     	$nextVersion = $nextFile['version'];
     	
     	return $this->updateTo($nextVersion);
