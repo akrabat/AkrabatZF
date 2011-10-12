@@ -61,9 +61,54 @@ class Akrabat_Tool_DatabaseSchemaProvider extends Zend_Tool_Project_Provider_Abs
         }
     }
 
+    public function decrement($env='development', $dir='./scripts/migrations')
+    {
+    	$this->_init($env);
+    	try {
+    		$db = $this->_getDbAdapter();
+    		$manager = new Akrabat_Db_Schema_Manager($dir, $db, $this->getTablePrefix());
+    		$version = $manager->getCurrentSchemaVersion();
+    		if ($version > 0) {
+	    		return $this->updateTo($version - 1, $env, $dir);
+    		}
+    		echo 'Schema is already at version 0' . PHP_EOL;
+    		return false;
+    	} catch (Exception $e) {
+    		echo 'AN ERROR HAS OCCURRED:' . PHP_EOL;
+    		echo $e->getMessage() . PHP_EOL;
+    		return false;
+    	}
+    }
+    
+    public function increment($env='development', $dir='./scripts/migrations')
+    {
+    	$this->_init($env);
+        $response = $this->_registry->getResponse();
+        try {
+            $db = $this->_getDbAdapter();
+            $manager = new Akrabat_Db_Schema_Manager($dir, $db, $this->getTablePrefix());
 
+            $result = $manager->incrementVersion();
+
+            switch ($result) {
+                case Akrabat_Db_Schema_Manager::RESULT_AT_MAXIMUM_VERSION:
+                    $response->appendContent("Already at maximum version " . $manager->getCurrentSchemaVersion());
+                    break;
+
+                default:
+                    $response->appendContent('Schema updated to version ' . $manager->getCurrentSchemaVersion());
+            }
+
+            return true;
+        } catch (Exception $e) {
+            $response->appendContent('AN ERROR HAS OCCURED:');
+            $response->appendContent($e->getMessage());
+            return false;
+        }
+    }
+    
     /**
-     * Provide the current schama version number
+     * Provide the current schema version number
      */
     public function current($env='development', $dir='./migrations')
     {

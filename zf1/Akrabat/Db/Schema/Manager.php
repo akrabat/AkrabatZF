@@ -4,6 +4,7 @@ class Akrabat_Db_Schema_Manager
     const RESULT_OK = 'RESULT_OK';
     const RESULT_AT_CURRENT_VERSION = 'RESULT_AT_CURRENT_VERSION';
     const RESULT_NO_MIGRATIONS_FOUND = 'RESULT_NO_MIGRATIONS_FOUND';
+    const RESULT_AT_MAXIMUM_VERSION = 'RESULT_AT_MAXIMUM_VERSION';
     
     protected $_schemaVersionTableName = 'schema_version';
     
@@ -98,9 +99,37 @@ class Akrabat_Db_Schema_Manager
             $this->_processFile($migration, $direction);
         }
         
+        // figure out what the real version we're going to is if going down
+        if ($direction == 'down') {
+        	$files = $this->_getMigrationFiles($version, 0);
+        	$versionFile = array_shift($files);
+        	if (!empty($files)) {
+        		$realVersion = $versionFile['version'];
+        	} else {
+        		$realVersion = 0;
+        	}
+        	// update the database to the version we're actually at
+        	$this->_updateSchemaVersion($realVersion);
+        }
+        
         return self::RESULT_OK;
     } 
-     
+
+    public function incrementVersion()
+    {
+    	$currentVersion = $this->getCurrentSchemaVersion();
+    	
+    	$files = $this->_getMigrationFiles($currentVersion, PHP_INT_MAX);
+    	if (empty($files)) {
+    		return self::RESULT_AT_MAXIMUM_VERSION;
+    	}
+
+    	$nextFile = array_shift($files);
+    	$nextVersion = $nextFile['version'];
+    	
+    	return $this->updateTo($nextVersion);
+    }
+    
     protected function _getMigrationFiles($currentVersion, $stopVersion) 
     {
         $direction = 'up';
@@ -113,6 +142,10 @@ class Akrabat_Db_Schema_Manager
         }
 
         $files = array();
+        if (!is_dir($this->_dir) || !is_readable($this->_dir)) {
+        	return $files;
+        } 
+        
         $d = dir($this->_dir);
         while (false !== ($entry = $d->read())) {
             if (preg_match('/^([0-9]+)\-(.*)\.php/i', $entry, $matches) ) {
