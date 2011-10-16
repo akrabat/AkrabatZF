@@ -12,6 +12,7 @@ class Akrabat_Tool_DatabaseSchemaProvider extends Zend_Tool_Project_Provider_Abs
     protected $_tablePrefix;
 
     /**
+     * Application config
      * @var Zend_Config
      */
     protected $_config;
@@ -32,25 +33,44 @@ class Akrabat_Tool_DatabaseSchemaProvider extends Zend_Tool_Project_Provider_Abs
         $this->_init($env);
         $response = $this->_registry->getResponse();
         try {
-            $db = $this->_getDbAdapter();
-            $manager = new Akrabat_Db_Schema_Manager($dir, $db, $this->getTablePrefix());
-
-            $result = $manager->updateTo($version);
+            $db             = $this->_getDbAdapter();
+            $manager        = new Akrabat_Db_Schema_Manager(
+                $dir, $db, $this->getTablePrefix()
+            );
+            $startVersion   = $manager->getCurrentSchemaVersion();
+            $requestVersion = $manager->processVersion($version);
+            $result         = $manager->updateTo($requestVersion);
 
             switch ($result) {
                 case Akrabat_Db_Schema_Manager::RESULT_AT_CURRENT_VERSION:
-                    if (!$version) {
-                        $version = $manager->getCurrentSchemaVersion();
-                    }
-                    $response->appendContent("Already at version $version");
+                    $response->appendContent("Already at version $requestVersion");
                     break;
 
                 case Akrabat_Db_Schema_Manager::RESULT_NO_MIGRATIONS_FOUND :
-                    $response->appendContent("No migration files found to migrate from {$manager->getCurrentSchemaVersion()} to $version");
+                    $displayVersion = $version;
+                    if ($displayVersion === null) {
+                        $displayVersion = $requestVersion;
+                    }
+                    $response->appendContent(
+                        "No migration files found to migrate from {$manager->getCurrentSchemaVersion()} to $displayVersion"
+                    );
                     break;
 
                 default:
                     $response->appendContent('Schema updated to version ' . $manager->getCurrentSchemaVersion());
+
+                    if ($startVersion > $requestVersion
+                        && $manager->getCurrentSchemaVersion() < $requestVersion
+                    ) {
+                        $response->appendContent(
+                            "No migration file was found to migrate from $startVersion "
+                            ."to $requestVersion so next lowest was run"
+                        );
+                    } else if ($manager->getCurrentSchemaVersion() != $requestVersion) {
+                        $response->appendContent(
+                            "No migration files found to migrate from {$manager->getCurrentSchemaVersion()} to $requestVersion"
+                        );
+                    }
             }
 
             return true;
@@ -61,9 +81,60 @@ class Akrabat_Tool_DatabaseSchemaProvider extends Zend_Tool_Project_Provider_Abs
         }
     }
 
+    /**
+     * Run the next migration script
+     *
+     * @param string $env Configuration environment
+     * @param string $dir The folder the migrations are in
+     * @return void
+     */
+    public function next($env='development', $dir='./scripts/migrations')
+    {
+        $this->updateTo('next', $env, $dir);
+    }
 
     /**
-     * Provide the current schama version number
+     * Run the previous migration script
+     *
+     * @param string $env Configuration environment
+     * @param string $dir The folder the migrations are in
+     * @return void
+     */
+    public function prev($env='development', $dir='./scripts/migrations')
+    {
+        $this->updateTo('prev', $env, $dir);
+    }
+
+    /**
+     * Decrement the migration scripts by the passed number of steps
+     *
+     * @param string $env Configuration environment
+     * @param string $dir The folder the migrations are in
+     * @return void
+     */
+    public function dec($steps, $env='development', $dir='./scripts/migrations')
+    {
+        $this->updateTo('-'.$steps, $env, $dir);
+    }
+
+    /**
+     * Increment the migration scripts by the passed number of steps
+     *
+     * @param string $env Configuration environment
+     * @param string $dir The folder the migrations are in
+     * @return void
+     */
+    public function inc($steps, $env='development', $dir='./scripts/migrations')
+    {
+        $this->updateTo('+'.$steps, $env, $dir);
+    }
+
+    /**
+     * Provide the current schema version number
+     *
+     * @param string $env Configuration environment
+     * @param string $dir The folder the migrations are in
+     * @return void
      */
     public function current($env='development', $dir='./migrations')
     {
