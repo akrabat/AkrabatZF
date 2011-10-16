@@ -82,7 +82,7 @@ class Akrabat_Tool_DatabaseSchemaProvider extends Zend_Tool_Project_Provider_Abs
 
             return true;
         } catch (Exception $e) {
-            $response->appendContent('AN ERROR HAS OCCURED: ');
+            $response->appendContent('AN ERROR HAS OCCURRED: ');
             $response->appendContent($e->getMessage());
             return false;
         }
@@ -189,7 +189,7 @@ class Akrabat_Tool_DatabaseSchemaProvider extends Zend_Tool_Project_Provider_Abs
      *
      * @param string $filename           File to create the object from
      * @param string $section            If not null, pull this sestion of the config
-     * file only. Dosn't apply to .php and .inc file
+     * file only. Doesn't apply to .php and .inc file
      * @param string $allowModifications Should the object be mutable or not
      * @throws Akrabat_Db_Schema_Exception
      * @return Zend_Config
