@@ -134,7 +134,7 @@ class Akrabat_Db_Adapter_Pdo_Sqlsrv extends Zend_Db_Adapter_Pdo_Abstract
         $this->_connection->exec('SET QUOTED_IDENTIFIER ON');
     }
 
-/**
+    /**
      * Set the transaction isoltion level.
      *
      * @param integer|null $level A fetch mode from SQLSRV_TXN_*.
