@@ -27,6 +27,18 @@ class Akrabat_Tool_DatabaseSchemaProvider extends Zend_Tool_Project_Provider_Abs
         return $this->updateTo(null, $env, $dir);
     }
 
+    /**
+     * Allows you to change the database schema version by specifying the desired version. If you are
+     * upgrading (choosing a higher version), it will update to the highest version that is available. 
+     * If you are downgrading, it will go to the highest version that is equal to or lower than the 
+     * version you specified.
+     * 
+     * @param string $version Version to change to
+     * @param string $env     Environment to retrieve database credentials from, default is development
+     * @param string $dir     Directory containing migration files, default is ./scripts/migrations
+     * 
+     * @return boolean
+     */
     public function updateTo($version, $env='development', $dir='./scripts/migrations')
     {
         $this->_init($env);
@@ -61,6 +73,16 @@ class Akrabat_Tool_DatabaseSchemaProvider extends Zend_Tool_Project_Provider_Abs
         }
     }
 
+    /**
+     * Decrements the database schema version to the next version or if specified
+     * down a specified number of versions.
+     * 
+     * @param int    $versions Number of versions to decrement. Default is 1
+     * @param string $env      Environment to read database credentials from
+     * @param string $dir      Directory containing migration files
+     * 
+     * @return boolean
+     */
     public function decrement($versions=1, $env='development', $dir='./scripts/migrations')
     {
     	$this->_init($env);
@@ -82,12 +104,22 @@ class Akrabat_Tool_DatabaseSchemaProvider extends Zend_Tool_Project_Provider_Abs
 
             return true;
         } catch (Exception $e) {
-            $response->appendContent('AN ERROR HAS OCCURED: ');
+            $response->appendContent('AN ERROR HAS OCCURRED: ');
             $response->appendContent($e->getMessage());
             return false;
         }
     }
     
+    /**
+     * Increments the datbase schema version to the next version or up a specified
+     * number of versions
+     * 
+     * @param int    $versions Number of versions to increment. Default is 1
+     * @param string $env      Environment to read database conguration from
+     * @param string $dir      Directory containing migration scripts
+     * 
+     * @return booolean
+     */
     public function increment($versions=1,$env='development', $dir='./scripts/migrations')
     {
     	$this->_init($env);
@@ -117,6 +149,8 @@ class Akrabat_Tool_DatabaseSchemaProvider extends Zend_Tool_Project_Provider_Abs
     
     /**
      * Provide the current schema version number
+     * 
+     * @return boolean
      */
     public function current($env='development', $dir='./migrations')
     {
@@ -136,12 +170,28 @@ class Akrabat_Tool_DatabaseSchemaProvider extends Zend_Tool_Project_Provider_Abs
         }
     }
 
+    /**
+     * Retrieves the realpath for ./scripts/migrations. Does not appear to be 
+     * used anywhere. Possible candidate for removal.
+     * 
+     * @return string
+     * @deprecated
+     */
     protected function _getDirectory()
     {
         $dir = './scripts/migrations';
         return realpath($dir);
     }
 
+    /**
+     * Initializes the Akrabat functionality and adds it to Zend_Tool (zf)
+     * 
+     * @param string $env Environment to initialize for
+     * 
+     * @return null
+     * 
+     * @throws Zend_Tool_Project_Exception
+     */
     protected function _init($env)
     {
         $profile = $this->_loadProfile(self::NO_PROFILE_THROW_EXCEPTION);
@@ -189,9 +239,11 @@ class Akrabat_Tool_DatabaseSchemaProvider extends Zend_Tool_Project_Provider_Abs
      *
      * @param string $filename           File to create the object from
      * @param string $section            If not null, pull this sestion of the config
-     * file only. Dosn't apply to .php and .inc file
+     * file only. Doesn't apply to .php and .inc file
      * @param string $allowModifications Should the object be mutable or not
+     * 
      * @throws Akrabat_Db_Schema_Exception
+     * 
      * @return Zend_Config
      */
     protected function _createConfig($filename, $section = null, $allowModifications = false) {
@@ -246,8 +298,8 @@ class Akrabat_Tool_DatabaseSchemaProvider extends Zend_Tool_Project_Provider_Abs
     /**
      * Will pull a list of file paths to application config overrides
      *
-     * There is a deliberate attempt to be very forgiving. If a file doesn’t exist,
-     * it won't be included in the list. If a the file doesn’t have a section that
+     * There is a deliberate attempt to be very forgiving. If a file doesn't exist,
+     * it won't be included in the list. If a the file doesn't have a section that
      * corresponds the current target environment it don't be merged.
      *
      * The config files should be standalone, they will not be able to extend
@@ -294,10 +346,11 @@ class Akrabat_Tool_DatabaseSchemaProvider extends Zend_Tool_Project_Provider_Abs
      *
      * Where the last part of the config key is the order to merge the files.
      *
-     * If a path is added that's order clashes with another file then the path will
-     * be added the end of the queue
+     * If a path is added with an order that clashes with another file then the 
+     * path will be added the end of the queue
      *
      * @param string $appConfigFilePath
+     * 
      * @return array
      */
     protected function _getAppConfigOverridePathList($appConfigFilePath)
