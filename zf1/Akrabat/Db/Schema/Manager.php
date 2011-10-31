@@ -104,11 +104,11 @@ class Akrabat_Db_Schema_Manager
         // figure out what the real version we're going to is if going down
         if ($direction == 'down') {
         	$files = $this->_getMigrationFiles($version, 0);
-        	$versionFile = array_shift($files);
-        	if (!empty($files)) {
-        		$realVersion = $versionFile['version'];
-        	} else {
+        	if (empty($files)) {
         		$realVersion = 0;
+        	} else {
+            	$versionFile = array_shift($files);
+        		$realVersion = $versionFile['version'];
         	}
         	// update the database to the version we're actually at
         	$this->_updateSchemaVersion($realVersion);
