@@ -222,11 +222,16 @@ class Akrabat_Db_Schema_Manager
      * 
      * @param string $currentVersion Version to migrate database from
      * @param string $stopVersion    Version to migrate database to
+     * @param string $dir            Directory containing migration files
      * 
      * @return array of file name, version and class name
      */
-    protected function _getMigrationFiles($currentVersion, $stopVersion) 
+    protected function _getMigrationFiles($currentVersion, $stopVersion, $dir = null)
     {
+        if ($dir === null) {
+            $dir = $this->_dir;
+        }
+
         $direction = 'up';
         $from = $currentVersion;
         $to  = $stopVersion;
@@ -237,20 +242,32 @@ class Akrabat_Db_Schema_Manager
         }
 
         $files = array();
-        if (!is_dir($this->_dir) || !is_readable($this->_dir)) {
+        if (!is_dir($dir) || !is_readable($dir)) {
         	return $files;
         } 
         
-        $d = dir($this->_dir);
+        $d = dir($dir);
         while (false !== ($entry = $d->read())) {
             if (preg_match('/^([0-9]+)\-(.*)\.php/i', $entry, $matches) ) {
                 $versionNumber = (int)$matches[1];
                 $className = $matches[2];
                 if ($versionNumber > $from && $versionNumber <= $to) {
-                    $files[$versionNumber] = array(
+                    $path = $this->_relativePath($this->_dir, $dir);
+                    $files["v{$matches[1]}"] = array(
+                        'path'=>$path,
                         'filename'=>$entry,
                         'version'=>$versionNumber,
                         'classname'=>$className);
+                }
+            } elseif ($entry != '.' && $entry != '..') {
+                $subdir = $dir . '/' . $entry;
+                if (is_dir($subdir) && is_readable($subdir)) {
+                    $files = array_merge(
+                        $files,
+                        $this->_getMigrationFiles(
+                            $currentVersion, $stopVersion, $subdir
+                        )
+                    );
                 }
             }
         }
@@ -295,10 +312,11 @@ class Akrabat_Db_Schema_Manager
      */
     protected function _processFile($migration, $direction) 
     {
+        $path = $migration['path'];
         $version = $migration['version'];
         $filename = $migration['filename'];
         $classname = $migration['classname'];
-        require_once($this->_dir.'/'.$filename);
+        require_once($this->_dir.'/'.$path.'/'.$filename);
         if (!class_exists($classname, false)) {
             throw new Akrabat_Db_Schema_Exception("Could not find class '$classname' in file '$filename'");
         }
@@ -334,6 +352,26 @@ class Akrabat_Db_Schema_Manager
     public function getPrefixedSchemaVersionTableName()
     {
         return $this->_tablePrefix . $this->_schemaVersionTableName;
+    }
+    
+    /**
+     * Returns a relative path from one directory to another
+     *
+     * @param string $from Directory to start from
+     * @param string $to   Directory to end at
+     * @param string $ps   Path seperator
+     *
+     * @return string
+     */
+    protected function _relativePath($from, $to, $ps = DIRECTORY_SEPARATOR)
+    {
+        $arFrom = explode($ps, rtrim($from, $ps));
+        $arTo = explode($ps, rtrim($to, $ps));
+        while (count($arFrom) && count($arTo) && ($arFrom[0] == $arTo[0])) {
+            array_shift($arFrom);
+            array_shift($arTo);
+        }
+        return str_pad("", count($arFrom) * 3, '..'.$ps).implode($ps, $arTo);
     }
 }
  
