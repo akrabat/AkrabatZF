@@ -104,8 +104,12 @@ class Manager
         return self::RESULT_OK;
     } 
      
-    protected function _getMigrationFiles($currentVersion, $stopVersion) 
+    protected function _getMigrationFiles($currentVersion, $stopVersion, $dir = null) 
     {
+        if ($dir === null) {
+            $dir = $this->_dir;
+        }
+
         $direction = 'up';
         $from = $currentVersion;
         $to  = $stopVersion;
@@ -116,16 +120,32 @@ class Manager
         }
 
         $files = array();
-        $d = dir($this->_dir);
+        if (!is_dir($dir) || !is_readable($dir)) {
+            return $files;
+        }
+
+        $d = dir($dir);
         while (false !== ($entry = $d->read())) {
             if (preg_match('/^([0-9]+)\-(.*)\.php/i', $entry, $matches) ) {
                 $versionNumber = (int)$matches[1];
                 $className = $matches[2];
                 if ($versionNumber > $from && $versionNumber <= $to) {
-                    $files[$versionNumber] = array(
+                    $path = $this->_relativePath($this->_dir, $dir);
+                    $files["v{$matches[1]}"] = array(
+                        'path'=>$path,
                         'filename'=>$entry,
                         'version'=>$versionNumber,
                         'classname'=>$className);
+                }
+            } elseif ($entry != '.' && $entry != '..') {
+                $subdir = $dir . '/' . $entry;
+                if (is_dir($subdir) && is_readable($subdir)) {
+                    $files = array_merge(
+                        $files,
+                        $this->_getMigrationFiles(
+                            $currentVersion, $stopVersion, $subdir
+                        )
+                    );
                 }
             }
         }
@@ -139,14 +159,14 @@ class Manager
         
         return $files;
     } 
-    
-    
+
     protected function _processFile($migration, $direction) 
     {
+        $path = $migration['path'];
         $version = $migration['version'];
         $filename = $migration['filename'];
         $classname = $migration['classname'];
-        require_once($this->_dir.'/'.$filename);
+        require_once($this->_dir.'/'.$path.'/'.$filename);
         if (!class_exists($classname, false)) {
             throw new Exception("Could not find class '$classname' in file '$filename'");
         }
@@ -172,4 +192,14 @@ class Manager
         return $this->_tablePrefix . $this->_schemaVersionTableName;
     }
 
+    protected function _relativePath($from, $to, $ps = DIRECTORY_SEPARATOR)
+    {
+        $arFrom = explode($ps, rtrim($from, $ps));
+        $arTo = explode($ps, rtrim($to, $ps));
+        while (count($arFrom) && count($arTo) && ($arFrom[0] == $arTo[0])) {
+            array_shift($arFrom);
+            array_shift($arTo);
+        }
+        return str_pad("", count($arFrom) * 3, '..'.$ps).implode($ps, $arTo);
+    }
 } 
