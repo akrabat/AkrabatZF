@@ -150,4 +150,19 @@ To get the Zend\Tool provider working:
 4. If you want a table prefix, add this to your `application.ini`:
 
         resources.db.table_prefix = "prefix"
+        
+        
+### Phing Task
+
+1. Define the phing task in the `build.xml`
+
+        <taskdef name="dbmigration" classname="phing.tasks.PhingAkrabatDbSchemaManager" />
+        
+2. Setup a phing target with the database options in the `build.xml`
+ 
+        <target name="database-migration">
+        	<dbmigration adapter="mysqli" host="${db.host}" dbname="${db.name}" username="${db.user}" password="${db.pass}" />
+		</target>
+
+3. Run phing using the command line, by `phing database-migration`
 
