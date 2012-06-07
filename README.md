@@ -152,7 +152,7 @@ To get the Zend\Tool provider working:
         resources.db.table_prefix = "prefix"
         
         
-### Phing Task
+## Phing Task
 
 1. Define the phing task in the `build.xml`
 
