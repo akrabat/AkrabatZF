@@ -1,6 +1,6 @@
 # Akrabat ZF library
 
-See [Akrabat_Db_Schema_Manager: Zend Framework database migrations](http://akrabat.com/zend-framework/akrabat_db_schema_manager-zend-framework-database-migrations/) for full details
+See [Akrabat_Db_Schema_Manager: Zend Framework database migrations](http://akrabat.com/zend-framework/akrabat_db_schema_manager-zend-framework-database-migrations/) for full details. This code is licensed under the [New-BSD license](http://akrabat.com/license/new_bsd/).
 
 ## ZF1:
 
