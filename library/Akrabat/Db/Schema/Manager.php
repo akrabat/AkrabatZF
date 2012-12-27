@@ -44,7 +44,7 @@ class Akrabat_Db_Schema_Manager
      */
     public function __construct($dir, Zend_Db_Adapter_Abstract $db, $tablePrefix='')
     {
-        $this->_dir = $dir;
+        $this->_dir = realpath($dir);
         $this->_db = $db;
         $this->_tablePrefix = $tablePrefix;
     } 
