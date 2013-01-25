@@ -69,6 +69,7 @@ class Akrabat_Tool_DatabaseSchemaProvider extends Zend_Tool_Project_Provider_Abs
         } catch (Exception $e) {
             $response->appendContent('AN ERROR HAS OCCURED:');
             $response->appendContent($e->getMessage());
+            $response->appendContent($e->getTraceAsString());
             return false;
         }
     }
@@ -106,6 +107,7 @@ class Akrabat_Tool_DatabaseSchemaProvider extends Zend_Tool_Project_Provider_Abs
         } catch (Exception $e) {
             $response->appendContent('AN ERROR HAS OCCURRED: ');
             $response->appendContent($e->getMessage());
+            $response->appendContent($e->getTraceAsString());
             return false;
         }
     }
@@ -143,6 +145,7 @@ class Akrabat_Tool_DatabaseSchemaProvider extends Zend_Tool_Project_Provider_Abs
         } catch (Exception $e) {
             $response->appendContent('AN ERROR HAS OCCURED:');
             $response->appendContent($e->getMessage());
+            $response->appendContent($e->getTraceAsString());
             return false;
         }
     }
@@ -166,6 +169,7 @@ class Akrabat_Tool_DatabaseSchemaProvider extends Zend_Tool_Project_Provider_Abs
         } catch (Exception $e) {
             echo 'AN ERROR HAS OCCURED:' . PHP_EOL;
             echo $e->getMessage() . PHP_EOL;
+            echo $e->getTraceAsString() . PHP_EOL;
             return false;
         }
     }
