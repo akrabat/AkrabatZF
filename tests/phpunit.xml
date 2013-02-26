@@ -1,0 +1,14 @@
+<phpunit bootstrap="./bootstrap.php">
+    <testsuite name="Akrabat_Db_Schema_Manager Library Test Suite">
+        <directory>./library</directory>
+    </testsuite>
+    
+    <filter>
+        <!-- If Zend Framework is inside your project's library, uncomment this filter -->
+        <!-- 
+        <whitelist>
+            <directory suffix=".php">../../library/Zend</directory>
+        </whitelist>
+        -->
+    </filter>
+</phpunit>

@@ -1,0 +1,12 @@
+language: php
+php:
+  - "5.3"
+  - "5.4"
+
+before_install:
+ - composer install --dev
+ - phpenv rehash
+
+script:
+ - cd tests/
+ - ../vendor/bin/phpunit
