@@ -1,0 +1,30 @@
+{
+	"name": "akrabat/akrabat_db_schema_manager",
+    "description": "Akrabat's Zend Tool Provider for Zend Framework 1 Database Migrations",
+    "type": "library",
+    "keywords": ["tooling", "db migration", "zf1"],
+    "homepage": "https://github.com/akrabat/Akrabat",
+    "authors": [
+        {
+            "name": "Rob Allen",
+            "homepage": "http://akrabat.com"
+        }
+    ],
+	"support": {
+		"issues": "https://github.com/akrabat/Akrabat/issues"
+	},
+    "autoload": {
+        "psr-0": { "Akrabat": "library" }
+   	},
+   	"include-path": [
+        "library/"
+    ],
+   	"require": {
+        "php": ">=5.2.7"
+	},
+	"require-dev": {
+		"bombayworks/zendframework1": "v1.12.1",
+		"phpunit/phpunit": "3.7.*",
+		"phpunit/dbunit": "1.2.*"
+	}
+}
