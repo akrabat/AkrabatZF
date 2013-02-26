@@ -4,6 +4,7 @@
     "type": "library",
     "keywords": ["tooling", "db migration", "zf1"],
     "homepage": "https://github.com/akrabat/Akrabat",
+    "license": "BSD-3-Clause",
     "authors": [
         {
             "name": "Rob Allen",
