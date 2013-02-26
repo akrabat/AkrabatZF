@@ -1,5 +1,5 @@
 {
-	"name": "akrabat/akrabat_db_schema_manager",
+    "name": "akrabat/akrabat_db_schema_manager",
     "description": "Akrabat's Zend Tool Provider for Zend Framework 1 Database Migrations",
     "type": "library",
     "keywords": ["tooling", "db migration", "zf1"],
@@ -22,9 +22,9 @@
    	"require": {
         "php": ">=5.2.7"
 	},
-	"require-dev": {
-		"bombayworks/zendframework1": "v1.12.1",
-		"phpunit/phpunit": "3.7.*",
-		"phpunit/dbunit": "1.2.*"
+    "require-dev": {
+        "bombayworks/zendframework1": "v1.12.1",
+        "phpunit/phpunit": "3.7.*",
+        "phpunit/dbunit": "1.2.*"
 	}
 }
