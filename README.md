@@ -40,7 +40,9 @@ To get the Zend_Tool provider working:
     where:  
        nnn => any number. The lower numbered files are executed first  
        Xxx => any name. This is the class name within the file.
-
+       
+ 	In up(), database changes are applied, in down(), changes are reverted. If changes cannot be reverted, then down() should throw a Akrabat_Db_Schema_Exception.
+   
 3. Create a class in your migrations file. Example for 001-Users.php:
     
         class Users extends Akrabat_Db_Schema_AbstractChange 
