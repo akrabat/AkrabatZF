@@ -224,6 +224,8 @@ class Akrabat_Db_Schema_Manager
      * @param string $stopVersion    Version to migrate database to
      * @param string $dir            Directory containing migration files
      * 
+     * @throws Akrabat_Db_Schema_Exception
+     * 
      * @return array of file name, version and class name
      */
     protected function _getMigrationFiles($currentVersion, $stopVersion, $dir = null)
@@ -247,9 +249,14 @@ class Akrabat_Db_Schema_Manager
         } 
         
         $d = dir($dir);
+        $seen = array();
         while (false !== ($entry = $d->read())) {
             if (preg_match('/^([0-9]+)\-(.*)\.php/i', $entry, $matches) ) {
                 $versionNumber = (int)$matches[1];
+                if (isset($seen[$versionNumber])) {
+                    throw new Akrabat_Db_Schema_Exception("version $versionNumber is used for multiple migrations.");
+                }
+                $seen[$versionNumber];
                 $className = $matches[2];
                 if ($versionNumber > $from && $versionNumber <= $to) {
                     $path = $this->_relativePath($this->_dir, $dir);
