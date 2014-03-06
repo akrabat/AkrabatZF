@@ -12,7 +12,7 @@ To get the Zend_Tool provider working:
 1. Place a copy of ZF1 in `/usr/local/include/zf1/`, so that the Zend folder is in `zf1/library/Zend`
 2. Update your `~/.bash_profile` to set up an alias to the zf.sh script
 
-        alias zf='export ZF_CONFIG_FILE=~/.zf.ini; /usr/local/include/M5/1.0/bin/zf.sh'
+        alias zf='export ZF_CONFIG_FILE=~/.zf.ini; /usr/local/include/zf1/bin/zf.sh'
     
    Restart your terminal or `source ~/.bash_profile`
 3. If you haven't already done so, setup the storage directory and config file:
@@ -25,9 +25,9 @@ To get the Zend_Tool provider working:
         cd /usr/local/include
         git clone http://github.com/akrabat/Akrabat.git
         
-5. Edit the created `~/.zf.ini`. Change path so that it includes ZF1 and Akrabat/zf1, allow for auotoloading Akrabat and set up the provider:
+5. Edit the created `~/.zf.ini`. Change path so that it includes ZF1 and Akrabat/library, allow for auotoloading Akrabat and set up the provider:
     
-        php.include_path = "/usr/local/include/zf1/library:/usr/local/include/Akrabat/zf1/"
+        php.include_path = "/usr/local/include/zf1/library:/usr/local/include/Akrabat/library/"
         autoloadernamespaces.0 = "Akrabat_"
         basicloader.classes.0 = "Akrabat_Tool_DatabaseSchemaProvider"
 
